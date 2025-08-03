@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress サブループ作成ツール</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>WordPress サブループ作成ツール</h1>
+            <p>カスタム投稿・通常投稿のサブループを簡単に作成できます</p>
+        </header>
+
+        <main>
+            <form id="subloop-form">
+                <div class="form-section">
+                    <h2>基本設定</h2>
+
+                    <div class="form-group">
+                        <label for="post-type">投稿タイプ</label>
+                        <select id="post-type" name="post-type" required>
+                            <option value="">選択してください</option>
+                            <option value="post">通常投稿 (post)</option>
+                            <option value="page">固定ページ (page)</option>
+                            <option value="custom">カスタム投稿タイプ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="custom-post-type-group" style="display: none;">
+                        <label for="custom-post-type">カスタム投稿タイプ名</label>
+                        <input type="text" id="custom-post-type" name="custom-post-type" placeholder="例: news, products, events">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="posts-per-page">表示件数</label>
+                        <input type="number" id="posts-per-page" name="posts-per-page" value="10" min="1" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order">並び順</label>
+                        <select id="order" name="order" required>
+                            <option value="DESC">降順 (新しい順)</option>
+                            <option value="ASC">昇順 (古い順)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orderby">並び基準</label>
+                        <select id="orderby" name="orderby" required>
+                            <option value="date">投稿日</option>
+                            <option value="modified">更新日</option>
+                            <option value="title">タイトル</option>
+                            <option value="menu_order">メニューオーダー</option>
+                            <option value="rand">ランダム</option>
+                            <option value="meta_value">カスタムフィールド値</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="meta-key-group" style="display: none;">
+                        <label for="meta-key">カスタムフィールドキー</label>
+                        <input type="text" id="meta-key" name="meta-key" placeholder="例: price, date">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>フィルタリング</h2>
+
+                    <div class="form-group">
+                        <label for="category">カテゴリー指定</label>
+                        <input type="text" id="category" name="category" placeholder="カテゴリーID または スラッグ (複数の場合はカンマ区切り)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tag">タグ指定</label>
+                        <input type="text" id="tag" name="tag" placeholder="タグID または スラッグ (複数の場合はカンマ区切り)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxonomy">カスタムタクソノミー</label>
+                        <input type="text" id="taxonomy" name="taxonomy" placeholder="タクソノミー名">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxonomy-terms">タクソノミーターム</label>
+                        <input type="text" id="taxonomy-terms" name="taxonomy-terms" placeholder="ターム名 または ID (複数の場合はカンマ区切り)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta-query">カスタムフィールド条件</label>
+                        <div class="meta-query-group">
+                            <input type="text" id="meta-query-key" name="meta-query-key" placeholder="フィールドキー">
+                            <select id="meta-query-compare" name="meta-query-compare">
+                                <option value="=">=</option>
+                                <option value="!=">!=</option>
+                                <option value=">">&gt;</option>
+                                <option value=">=">&gt;=</option>
+                                <option value="<">&lt;</option>
+                                <option value="<=">&lt;=</option>
+                                <option value="LIKE">LIKE</option>
+                                <option value="NOT LIKE">NOT LIKE</option>
+                                <option value="EXISTS">EXISTS</option>
+                                <option value="NOT EXISTS">NOT EXISTS</option>
+                            </select>
+                            <input type="text" id="meta-query-value" name="meta-query-value" placeholder="値">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exclude-categories">除外するカテゴリー</label>
+                        <input type="text" id="exclude-categories" name="exclude-categories" placeholder="カテゴリーID または スラッグ (複数の場合はカンマ区切り)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exclude-posts">除外する投稿ID</label>
+                        <input type="text" id="exclude-posts" name="exclude-posts" placeholder="投稿ID (複数の場合はカンマ区切り)">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>表示設定</h2>
+
+                    <div class="form-group">
+                        <label>表示する項目を選択してください</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="display-items" value="title" checked> タイトル</label>
+                            <label><input type="checkbox" name="display-items" value="content"> 本文</label>
+                            <label><input type="checkbox" name="display-items" value="excerpt"> 抜粋</label>
+                            <label><input type="checkbox" name="display-items" value="date"> 投稿日</label>
+                            <label><input type="checkbox" name="display-items" value="author"> 投稿者</label>
+                            <label><input type="checkbox" name="display-items" value="thumbnail"> アイキャッチ画像</label>
+                            <label><input type="checkbox" name="display-items" value="categories"> カテゴリー</label>
+                            <label><input type="checkbox" name="display-items" value="tags"> タグ</label>
+                            <label><input type="checkbox" name="display-items" value="permalink"> リンク</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thumbnail-size">アイキャッチ画像サイズ</label>
+                        <select id="thumbnail-size" name="thumbnail-size">
+                            <option value="thumbnail">サムネイル (150x150)</option>
+                            <option value="medium">中サイズ (300x300)</option>
+                            <option value="large">大サイズ (1024x1024)</option>
+                            <option value="full">フルサイズ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="excerpt-length">抜粋文字数</label>
+                        <input type="number" id="excerpt-length" name="excerpt-length" value="100" min="10" max="500">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>HTMLマークアップ</h2>
+
+                    <div class="form-group">
+                        <label for="container-class">コンテナクラス名</label>
+                        <input type="text" id="container-class" name="container-class" value="subloop-container" placeholder="CSSクラス名">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-class">アイテムクラス名</label>
+                        <input type="text" id="item-class" name="item-class" value="subloop-item" placeholder="CSSクラス名">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="no-posts-message">投稿が見つからない場合のメッセージ</label>
+                        <input type="text" id="no-posts-message" name="no-posts-message" value="投稿が見つかりませんでした。" placeholder="メッセージ">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">PHPコードを生成</button>
+                    <button type="button" id="reset-form">リセット</button>
+                </div>
+            </form>
+        </main>
+
+        <section id="output-section" style="display: none;">
+            <h2>生成されたPHPコード</h2>
+            <div class="code-actions">
+                <button id="copy-code">コードをコピー</button>
+                <button id="download-code">ファイルをダウンロード</button>
+            </div>
+            <pre id="generated-code"></pre>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
