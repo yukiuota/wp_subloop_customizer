@@ -157,10 +157,20 @@ $args = array(`;
         // カスタムタクソノミー
         if (data.taxonomy && data.taxonomyTerms) {
             const terms = data.taxonomyTerms.split(',').map(term => term.trim());
+
+            // 全てが数値かどうかをチェック
+            const allNumeric = terms.every(term => !isNaN(term) && term !== '');
+            const field = allNumeric ? 'term_id' : 'slug';
+
+            // 数値の場合は配列形式、文字列の場合はクォート付き配列形式
+            const termsArray = allNumeric ?
+                terms.join(', ') :
+                `'${terms.join("', '")}'`;
+
             taxQueryArray.push(`        array(
             'taxonomy' => '${data.taxonomy}',
-            'field'    => 'slug',
-            'terms'    => array('${terms.join("', '")}'),
+            'field'    => '${field}',
+            'terms'    => array(${termsArray}),
         )`);
         }
 
